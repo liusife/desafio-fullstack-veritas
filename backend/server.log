@@ -1,0 +1,2 @@
+2026/08/07 01:18:32 Server starting on port 8080
+2026/08/07 01:18:34 "GET http://localhost:8080/health HTTP/1.1" from [::1]:60444 - 200 16B in 77.467µs
