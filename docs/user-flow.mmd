@@ -1,0 +1,41 @@
+graph TD
+    A[Início] --> B{Carrega Tarefas}
+    B -->|Erro| C[Exibe Erro]
+    B -->|Sucesso| D[Exibe Kanban]
+    
+    D --> E[Ações do Usuário]
+    
+    E --> F[Criar Tarefa]
+    E --> G[Editar Tarefa]
+    E --> H[Mover Coluna]
+    E --> I[Excluir Tarefa]
+    
+    F --> F1[Abre Modal]
+    F1 --> F2[Preenche Formulário]
+    F2 --> F3[POST /tasks]
+    F3 --> F4[Atualiza Estado]
+    F4 --> D
+    
+    G --> G1[Abre Modal com Dados]
+    G1 --> G2[Edita Campos]
+    G2 --> G3[PUT /tasks/:id]
+    G3 --> G4[Atualiza Estado]
+    G4 --> D
+    
+    H --> H1[Clica Botão Mover]
+    H1 --> H2[PUT /tasks/:id {status}]
+    H2 --> H3[Atualiza Estado]
+    H3 --> D
+    
+    I --> I1[Confirma Exclusão]
+    I1 --> I2[DELETE /tasks/:id]
+    I2 --> I3[Atualiza Estado]
+    I3 --> D
+    
+    C --> J[Tentar Novamente]
+    J --> B
+    
+    style A fill:#e8f5e9,stroke:#2e7d32
+    style D fill:#e3f2fd,stroke:#1565c0
+    style C fill:#ffebee,stroke:#c62828
+    style E fill:#fff3e0,stroke:#ef6c00
