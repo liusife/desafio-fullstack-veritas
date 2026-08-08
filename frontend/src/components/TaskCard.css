@@ -1,63 +1,147 @@
+/* ===== TASK CARD ===== */
 .task-card {
-  background: white;
-  border-radius: 8px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
   padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 4px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
   border-left: 4px solid;
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition: box-shadow var(--transition), opacity var(--transition);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .task-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.task-card:focus-within {
+  box-shadow: var(--focus-ring), var(--shadow-md);
+  border-color: var(--color-todo);
+  z-index: 10;
+}
+
+/* DRAG STATE - only opacity, NO transform/scale */
+.task-card.dragging {
+  opacity: 0.5;
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+}
+
+/* DRAG HANDLE - only this element is draggable */
+.drag-handle {
+  cursor: grab;
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1;
+  padding: 6px 8px;
+  margin: -6px -12px -6px -16px;
+  align-self: flex-start;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  user-select: none;
+}
+
+.task-card:hover .drag-handle,
+.drag-handle:focus {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drag-handle:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.task-card:active .drag-handle,
+.task-card.dragging .drag-handle {
+  cursor: grabbing;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* CONTENT WRAPPER - isolated from drag */
+.task-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
 }
 
 .task-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
+  gap: 8px;
 }
 
 .task-title {
   margin: 0;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-primary);
   word-break: break-word;
+  flex: 1;
+  line-height: 1.4;
 }
 
 .task-actions {
   display: flex;
   gap: 4px;
+  flex-shrink: 0;
 }
 
 .btn-icon {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
-  transition: background-color 0.2s;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
 }
 
 .btn-icon:hover {
-  background-color: #f3f4f6;
+  background-color: var(--bg-tertiary);
+  transform: scale(1.05);
+}
+
+.btn-icon:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .btn-danger:hover {
   background-color: #fef2f2;
+  color: #ef4444;
 }
 
 .task-description {
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  color: #6b7280;
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-word;
+  padding-right: 8px;
 }
 
 .task-footer {
@@ -65,93 +149,159 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 8px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--border-color);
+  margin-top: 4px;
 }
 
 .task-status {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  text-transform: capitalize;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  box-shadow: var(--shadow-sm);
 }
 
-.task-move-buttons {
-  display: flex;
-  gap: 4px;
-}
-
-.btn-move {
-  background: none;
-  border: 1px solid #d1d5db;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  transition: all 0.2s;
-  color: #374151;
-}
-
-.btn-move:hover {
-  background-color: #f3f4f6;
-  border-color: #9ca3af;
-}
-
+/* ===== EDIT FORM ===== */
 .task-edit-form {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  animation: slideDown 150ms ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.task-edit-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.task-edit-form .form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* INPUTS WITH VISIBLE BORDERS */
 .task-edit-form input,
-.task-edit-form textarea {
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+.task-edit-form textarea,
+.task-edit-form select {
+  padding: 12px 14px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all var(--transition);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .task-edit-form input:focus,
-.task-edit-form textarea:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.task-edit-form textarea:focus,
+.task-edit-form select:focus {
+  border-color: var(--color-todo);
+  box-shadow: var(--focus-ring);
 }
 
+.task-edit-form input::placeholder,
+.task-edit-form textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.task-edit-form textarea {
+  min-height: 90px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.task-edit-form select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
+}
+
+/* BUTTONS - SAVE = GREEN, CANCEL = RED */
 .task-edit-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   justify-content: flex-end;
+  padding-top: 8px;
 }
 
 .btn-save,
 .btn-cancel {
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   border: none;
-  transition: background-color 0.2s;
+  transition: all var(--transition);
+  color: white;
+  min-width: 100px;
 }
 
 .btn-save {
-  background-color: #3b82f6;
-  color: white;
+  background-color: #10b981; /* GREEN */
 }
 
 .btn-save:hover {
-  background-color: #2563eb;
+  background-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-save:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring), 0 0 0 2px #10b981;
+}
+
+.btn-save:active {
+  transform: translateY(0);
 }
 
 .btn-cancel {
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: #ef4444; /* RED */
 }
 
 .btn-cancel:hover {
-  background-color: #e5e7eb;
+  background-color: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-cancel:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring), 0 0 0 2px #ef4444;
+}
+
+.btn-cancel:active {
+  transform: translateY(0);
+}
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+  .task-card {
+    padding: 14px;
+  }
+  .task-title { font-size: 14px; }
+  .btn-icon { width: 28px; height: 28px; padding: 4px; }
+  .btn-save, .btn-cancel { padding: 10px 16px; font-size: 13px; min-width: 80px; }
 }

@@ -41,10 +41,15 @@ func (h *TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	status := req.Status
+	if status == "" {
+		status = StatusTodo
+	}
+
 	task := Task{
 		Title:       req.Title,
 		Description: req.Description,
-		Status:      StatusTodo,
+		Status:      status,
 	}
 
 	created := h.store.Create(task)

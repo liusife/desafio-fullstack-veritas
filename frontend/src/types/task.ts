@@ -18,6 +18,7 @@ export interface TaskFormData {
 export interface CreateTaskRequest {
   title: string;
   description?: string;
+  status?: TaskStatus;
 }
 
 export interface UpdateTaskRequest {

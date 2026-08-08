@@ -1,5 +1,5 @@
 # Backend Dockerfile
-FROM golang:1.23-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
@@ -16,11 +16,11 @@ WORKDIR /app
 RUN apk --no-cache add ca-certificates
 
 COPY --from=builder /app/main .
-COPY --from=builder /app/tasks.json ./tasks.json
+COPY tasks.json ./tasks.json
 
-EXPOSE 8080
+EXPOSE 8081
 
-ENV PORT=8080
+ENV PORT=8081
 ENV DATA_FILE=/app/tasks.json
 
 CMD ["./main"]

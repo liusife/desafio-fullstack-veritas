@@ -3,5 +3,4 @@
 .gitignore
 *.md
 *.log
-tasks.json
 main

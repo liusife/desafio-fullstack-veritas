@@ -29,8 +29,9 @@ type Task struct {
 }
 
 type CreateTaskRequest struct {
-	Title       string `json:"title"`
-	Description string `json:"description,omitempty"`
+	Title       string     `json:"title"`
+	Description string     `json:"description,omitempty"`
+	Status      TaskStatus `json:"status,omitempty"`
 }
 
 type UpdateTaskRequest struct {
@@ -46,6 +47,9 @@ func (s TaskStatus) IsValid() bool {
 func ValidateCreateTask(req CreateTaskRequest) error {
 	if req.Title == "" {
 		return errors.New("title is required")
+	}
+	if req.Status != "" && !req.Status.IsValid() {
+		return errors.New("invalid status")
 	}
 	return nil
 }

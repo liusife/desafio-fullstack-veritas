@@ -1,4 +1,17 @@
 import { useState } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { KanbanColumn } from './KanbanColumn';
 import { Modal } from './Modal';
 import { TaskForm } from './TaskForm';
@@ -21,6 +34,17 @@ export function KanbanBoard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleOpenCreateModal = () => {
     setEditingTask(null);
@@ -59,8 +83,18 @@ export function KanbanBoard() {
     }
   };
 
-  const handleMoveTask = async (id: string, status: TaskStatus) => {
-    await moveTask(id, status);
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const taskId = active.id as string;
+      const columnId = over.id as string;
+
+      if (columnId.startsWith('column-')) {
+        const newStatus = columnId.replace('column-', '') as TaskStatus;
+        await moveTask(taskId, newStatus);
+      }
+    }
   };
 
   if (loading) {
@@ -82,41 +116,63 @@ export function KanbanBoard() {
   }
 
   return (
-    <div className="kanban-board">
-      <header className="kanban-header">
-        <h1>Mini Kanban</h1>
-        <button className="btn-add-task" onClick={handleOpenCreateModal}>
-          + Nova Tarefa
-        </button>
-      </header>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext items={STATUS_ORDER.map(s => `column-${s}`)} strategy={verticalListSortingStrategy}>
+        <div className="kanban-board">
+          <header className="kanban-header">
+            <h1>Mini Kanban</h1>
+            <button className="btn-add-task" onClick={handleOpenCreateModal}>
+              + Nova Tarefa
+            </button>
+          </header>
 
-      <div className="kanban-columns" role="region" aria-label="Quadro Kanban">
-        {STATUS_ORDER.map((status) => (
-          <KanbanColumn
-            key={status}
-            status={status}
-            tasks={getTasksByStatus(status)}
-            onEditTask={handleEditTask}
-            onDeleteTask={handleDeleteTask}
-            onMoveTask={handleMoveTask}
-          />
-        ))}
-      </div>
+          <div className="kanban-columns" role="region" aria-label="Quadro Kanban">
+            {STATUS_ORDER.map((status) => (
+              <KanbanColumn
+                key={status}
+                status={status}
+                tasks={getTasksByStatus(status)}
+                onEditTask={handleEditTask}
+                onDeleteTask={handleDeleteTask}
+              />
+            ))}
+          </div>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        title={editingTask ? 'Editar Tarefa' : 'Nova Tarefa'}
-        size="md"
-      >
-        <TaskForm
-          initialData={editingTask ? { title: editingTask.title, description: editingTask.description, status: editingTask.status } : undefined}
-          onSubmit={handleSubmitForm}
-          onCancel={handleCloseModal}
-          submitLabel={editingTask ? 'Atualizar' : 'Criar'}
-          isLoading={isSubmitting}
-        />
-      </Modal>
-    </div>
+          <Modal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            title={editingTask ? 'Editar Tarefa' : 'Nova Tarefa'}
+            size="md"
+          >
+            <TaskForm
+              initialData={editingTask ? { title: editingTask.title, description: editingTask.description, status: editingTask.status } : undefined}
+              onSubmit={handleSubmitForm}
+              onCancel={handleCloseModal}
+              submitLabel={editingTask ? 'Atualizar' : 'Criar'}
+              isLoading={isSubmitting}
+            />
+          </Modal>
+        </div>
+      </SortableContext>
+    </DndContext>
   );
+}
+
+function sortableKeyboardCoordinates(event: KeyboardEvent) {
+  switch (event.key) {
+    case 'ArrowRight':
+      return { x: 50, y: 0 };
+    case 'ArrowLeft':
+      return { x: -50, y: 0 };
+    case 'ArrowDown':
+      return { x: 0, y: 50 };
+    case 'ArrowUp':
+      return { x: 0, y: -50 };
+    default:
+      return { x: 0, y: 0 };
+  }
 }
