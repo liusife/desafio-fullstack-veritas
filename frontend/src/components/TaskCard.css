@@ -39,15 +39,15 @@
   font-size: 18px;
   line-height: 1;
   padding: 6px 8px;
-  margin: -6px -12px -6px -16px;
+  margin: -6px -12px -6px -8px;
   align-self: flex-start;
   border-radius: var(--radius-sm);
   transition: all var(--transition);
   opacity: 0;
   visibility: hidden;
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 28px;
+  left: 16px;
   z-index: 2;
   user-select: none;
 }

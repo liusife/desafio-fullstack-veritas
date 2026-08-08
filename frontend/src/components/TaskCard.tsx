@@ -63,14 +63,16 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
       className={`task-card ${isDragging ? 'dragging' : ''}`}
       style={dragStyle}
     >
-      <div
-        className="drag-handle"
-        aria-label="Arrastar tarefa"
-        {...attributes}
-        {...listeners}
-      >
-        ⋮⋮
-      </div>
+      {!isEditing && (
+        <div
+          className="drag-handle"
+          aria-label="Arrastar tarefa"
+          {...attributes}
+          {...listeners}
+        >
+          ⋮⋮
+        </div>
+      )}
       <div className="task-content">
         {isEditing ? (
           <div className="task-edit-form">

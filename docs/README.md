@@ -32,7 +32,7 @@ graph TD
     
     E --> F[Criar Tarefa]
     E --> G[Editar Tarefa]
-    E --> H[Mover Coluna]
+    E --> H[Mover Coluna (Drag & Drop)]
     E --> I[Excluir Tarefa]
     
     F --> F1[Abre Modal]
@@ -47,10 +47,11 @@ graph TD
     G3 --> G4[Atualiza Estado]
     G4 --> D
     
-    H --> H1[Clica Botão Mover]
-    H1 --> H2[PUT /tasks/:id {status}]
-    H2 --> H3[Atualiza Estado]
-    H3 --> D
+    H --> H1[Arrasta Card pela Alça]
+    H1 --> H2[Solta na Coluna Destino]
+    H2 --> H3[PUT /tasks/:id {status}]
+    H3 --> H4[Atualiza Estado]
+    H4 --> D
     
     I --> I1[Confirma Exclusão]
     I1 --> I2[DELETE /tasks/:id]

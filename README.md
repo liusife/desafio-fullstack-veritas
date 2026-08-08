@@ -11,7 +11,7 @@ Uma aplicação fullstack de gerenciamento de tarefas estilo Kanban desenvolvida
 cd backend
 go mod tidy
 go run *.go
-# Servidor roda em http://localhost:8080
+# Servidor roda em http://localhost:8081
 ```
 
 **Frontend (React + Vite):**
@@ -29,7 +29,7 @@ npm run dev
 docker compose up --build
 
 # Frontend acessível em http://localhost
-# Backend API em http://localhost:8080
+# Backend API em http://localhost:8081
 ```
 
 ## Decisões Técnicas
@@ -45,10 +45,11 @@ docker compose up --build
 ### Frontend (React + TypeScript)
 - **Vite**: Build rápido, HMR eficiente, configuração mínima
 - **TypeScript**: Type safety, autocomplete, refactoring seguro
-- **CSS Modules**: Escopo local, sem conflitos, manutenibilidade
+- **CSS Modules / CSS Variables**: Escopo local, design system consistente, manutenibilidade
 - **Custom Hooks (`useTasks`)**: Lógica reutilizável, separação de concerns
 - **Fetch API nativo**: Zero dependências, moderno, suficiente para MVP
 - **Componentes funcionais + Hooks**: Padrão moderno React
+- **@dnd-kit**: Drag-and-drop acessível e performático (core, sortable, utilities)
 
 ## Limitações Conhecidas
 
@@ -57,14 +58,12 @@ docker compose up --build
 3. **Sem paginação** - Lista todas as tarefas de uma vez
 4. **Sem testes automatizados** - Cobertura de testes não implementada
 5. **CORS aberto para desenvolvimento** - Em produção deve ser restrito
-6. **Drag-and-drop nativo não implementado** - Usa botões de mover (bonus opcional)
 
 ## Melhorias Futuras
 
 - [ ] Banco de dados (PostgreSQL/SQLite) com migrações
 - [ ] Autenticação JWT + controle de acesso
 - [ ] WebSockets para atualizações em tempo real
-- [ ] Drag-and-drop com @dnd-kit
 - [ ] Filtros, busca, prioridades, labels, due dates
 - [ ] Testes unitários (Go testing, Vitest/React Testing Library)
 - [ ] Testes E2E (Cypress/Playwright)
