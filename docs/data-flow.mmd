@@ -1,0 +1,38 @@
+graph TD
+    subgraph "Frontend (React)"
+        UI[Componentes UI]
+        Hook[useTasks Hook]
+        API[API Service]
+    end
+    
+    subgraph "Backend (Go)"
+        Router[Chi Router]
+        Handlers[Task Handlers]
+        Store[TaskStore Interface]
+        Memory[(In-Memory Map)]
+        File[(tasks.json)]
+    end
+    
+    UI -->|User Events| Hook
+    Hook -->|CRUD Operations| API
+    API -->|HTTP Requests| Router
+    Router --> Handlers
+    Handlers -->|Validation| Store
+    Store -->|Read/Write| Memory
+    Store -->|Persist/Load| File
+    
+    Memory -.->|Data| Store
+    Store -.->|Data| Handlers
+    Handlers -.->|JSON Response| Router
+    Router -.->|HTTP Response| API
+    API -.->|State Update| Hook
+    Hook -.->|Re-render| UI
+    
+    style UI fill:#e3f2fd,stroke:#1565c0
+    style Hook fill:#e8f5e9,stroke:#2e7d32
+    style API fill:#fff3e0,stroke:#ef6c00
+    style Router fill:#fce4ec,stroke:#c2185b
+    style Handlers fill:#fce4ec,stroke:#c2185b
+    style Store fill:#f3e5f5,stroke:#7b1fa2
+    style Memory fill:#e0f2f1,stroke:#00695c
+    style File fill:#e0f2f1,stroke:#00695c

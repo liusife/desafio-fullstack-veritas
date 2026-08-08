@@ -1,0 +1,6 @@
+# Backend .dockerignore
+.git
+.gitignore
+*.md
+*.log
+main
